@@ -1,83 +1,83 @@
-# BAI 5: Thiet ke Quy trinh va Prompt Kiem chung Dau ra
+# BÀI 5: Thiết kế Quy trình và Prompt Kiểm chứng Đầu ra
 
-## 1. Boi canh va y do thiet ke quy trinh 2 buoc
+## 1. Bối cảnh và ý đồ thiết kế quy trình 2 bước
 
-Tinh nang can xay dung la kiem tra tinh hop le cua ma ve xe khach truc tuyen GreenBus. Ma ve hop le phai co dinh dang `BUS-XX-YYMMDD`, trong do `XX` la ma tinh/thanh gom dung 2 chu cai in hoa, `YYMMDD` la ngay di xe va ngay nay khong duoc nam trong qua khu.
+Tính năng cần xây dựng là kiểm tra tính hợp lệ của mã vé xe khách trực tuyến GreenBus. Mã vé hợp lệ phải có định dạng `BUS-XX-YYMMDD`, trong đó `XX` là mã tỉnh/thành gồm đúng 2 chữ cái in hoa, `YYMMDD` là ngày đi xe và ngày này không được nằm trong quá khứ.
 
-Quy trinh 2 buoc duoc thiet ke de giam rui ro AI sinh ma nhin co ve dung nhung van sai o cac truong hop bien. Buoc 1 dung AI de sinh ma nguon theo yeu cau nghiep vu. Buoc 2 dung mot prompt kiem chung doc lap, yeu cau AI dong vai ky su kiem thu hoac kiem toan bao mat de phan bien lai ma nguon. Cach lam nay giup phat hien cac loi nhu xu ly ngay thang khong nghiem ngat, phu thuoc mui gio he thong, loi null, loi cat chuoi, hoac sai logic khi chuyen nam.
+Quy trình 2 bước được thiết kế để giảm rủi ro AI sinh mã nhìn có vẻ đúng nhưng vẫn sai ở các trường hợp biên. Bước 1 dùng AI để sinh mã nguồn theo yêu cầu nghiệp vụ. Bước 2 dùng một prompt kiểm chứng độc lập, yêu cầu AI đóng vai kỹ sư kiểm thử hoặc kiểm toán bảo mật để phản biện lại mã nguồn. Cách làm này giúp phát hiện các lỗi như xử lý ngày tháng không nghiêm ngặt, phụ thuộc múi giờ hệ thống, lỗi null, lỗi cắt chuỗi hoặc sai logic khi chuyển năm.
 
-## 2. Prompt sinh ma nguon
-
-```text
-Ban la lap trinh vien Java dang xay dung tinh nang kiem tra ma ve cho he thong ban ve xe khach truc tuyen GreenBus.
-
-Hay viet class TicketValidator bang Java de kiem tra ma ve hop le theo cac quy tac:
-1. Ma ve bat buoc bat dau bang tien to "BUS-".
-2. Tiep theo la ma tinh/thanh pho gom dung 2 ky tu chu in hoa A-Z, vi du HN, SG, DN.
-3. Tiep theo la dau gach ngang "-".
-4. Tiep theo la 6 chu so bieu dien ngay di xe theo dinh dang YYMMDD.
-5. Ngay di xe khong duoc la ngay trong qua khu, phai lon hon hoac bang ngay hien tai cua he thong.
-
-Yeu cau xu ly loi bien:
-1. Neu ma ve null thi tra ve false, khong duoc gay NullPointerException.
-2. Neu ma ve rong hoac chi gom khoang trang thi tra ve false.
-3. Neu sai dinh dang thi tra ve false.
-4. Neu ngay thang khong hop le, vi du ngay 32 thang 13 hoac ngay 30 thang 2, thi tra ve false.
-5. Neu ngay di xe trong qua khu thi tra ve false.
-6. Chi dung thu vien chuan Java.
-
-Hay tra ve:
-1. Ma nguon Java hoan chinh cho class TicketValidator.
-2. Mot ham main nho de chay thu vai truong hop hop le va khong hop le.
-3. Giai thich ngan gon cach code xu ly tung nhom quy tac.
-```
-
-## 3. Prompt kiem chung doc lap
+## 2. Prompt sinh mã nguồn
 
 ```text
-Ban la mot ky su kiem thu va kiem toan bao mat doc lap. Hay review ma nguon Java TicketValidator duoi day nhu review truoc khi dua vao he thong GreenBus.
+Bạn là lập trình viên Java đang xây dựng tính năng kiểm tra mã vé cho hệ thống bán vé xe khách trực tuyến GreenBus.
 
-Muc tieu review:
-1. Tim loi logic tiem an trong xu ly dinh dang BUS-XX-YYMMDD.
-2. Kiem tra nguy co NullPointerException, StringIndexOutOfBoundsException hoac DateTimeException.
-3. Kiem tra cach phan tich ngay thang co chap nhan ngay khong hop le hay khong, vi du 260230 hoac 261332.
-4. Kiem tra logic so sanh voi ngay hien tai co gap van de khi chuyen ngay, chuyen nam hoac khi he thong chay o mui gio khac hay khong.
-5. Kiem tra ma co de test tu dong hay khong. Neu phu thuoc truc tiep vao LocalDate.now() thi hay de xuat cach cai tien bang Clock.
-6. Dua ra danh sach loi/rui ro theo muc do nghiem trong.
-7. Viet lai phien ban TicketValidator toi uu cuoi cung, su dung java.time.LocalDate hien dai va co kha nang test on dinh.
+Hãy viết class TicketValidator bằng Java để kiểm tra mã vé hợp lệ theo các quy tắc:
+1. Mã vé bắt buộc bắt đầu bằng tiền tố "BUS-".
+2. Tiếp theo là mã tỉnh/thành phố gồm đúng 2 ký tự chữ in hoa A-Z, ví dụ HN, SG, DN.
+3. Tiếp theo là dấu gạch ngang "-".
+4. Tiếp theo là 6 chữ số biểu diễn ngày đi xe theo định dạng YYMMDD.
+5. Ngày đi xe không được là ngày trong quá khứ, phải lớn hơn hoặc bằng ngày hiện tại của hệ thống.
 
-Ma nguon can review:
-[Dan toan bo ma nguon TicketValidator sinh ra o Buoc 1 vao day]
+Yêu cầu xử lý lỗi biên:
+1. Nếu mã vé null thì trả về false, không được gây NullPointerException.
+2. Nếu mã vé rỗng hoặc chỉ gồm khoảng trắng thì trả về false.
+3. Nếu sai định dạng thì trả về false.
+4. Nếu ngày tháng không hợp lệ, ví dụ ngày 32 tháng 13 hoặc ngày 30 tháng 2, thì trả về false.
+5. Nếu ngày đi xe trong quá khứ thì trả về false.
+6. Chỉ dùng thư viện chuẩn Java.
+
+Hãy trả về:
+1. Mã nguồn Java hoàn chỉnh cho class TicketValidator.
+2. Một hàm main nhỏ để chạy thử vài trường hợp hợp lệ và không hợp lệ.
+3. Giải thích ngắn gọn cách code xử lý từng nhóm quy tắc.
 ```
 
-## 4. Minh chung thuc te dang text log
+## 3. Prompt kiểm chứng độc lập
+
+```text
+Bạn là một kỹ sư kiểm thử và kiểm toán bảo mật độc lập. Hãy review mã nguồn Java TicketValidator dưới đây như review trước khi đưa vào hệ thống GreenBus.
+
+Mục tiêu review:
+1. Tìm lỗi logic tiềm ẩn trong xử lý định dạng BUS-XX-YYMMDD.
+2. Kiểm tra nguy cơ NullPointerException, StringIndexOutOfBoundsException hoặc DateTimeException.
+3. Kiểm tra cách phân tích ngày tháng có chấp nhận ngày không hợp lệ hay không, ví dụ 260230 hoặc 261332.
+4. Kiểm tra logic so sánh với ngày hiện tại có gặp vấn đề khi chuyển ngày, chuyển năm hoặc khi hệ thống chạy ở múi giờ khác hay không.
+5. Kiểm tra mã có dễ test tự động hay không. Nếu phụ thuộc trực tiếp vào LocalDate.now() thì hãy đề xuất cách cải tiến bằng Clock.
+6. Đưa ra danh sách lỗi/rủi ro theo mức độ nghiêm trọng.
+7. Viết lại phiên bản TicketValidator tối ưu cuối cùng, sử dụng java.time.LocalDate hiện đại và có khả năng test ổn định.
+
+Mã nguồn cần review:
+[Dán toàn bộ mã nguồn TicketValidator sinh ra ở Bước 1 vào đây]
+```
+
+## 4. Minh chứng thực tế dạng text log
 
 ````text
-Nguoi dung:
-Ban la lap trinh vien Java dang xay dung tinh nang kiem tra ma ve cho he thong ban ve xe khach truc tuyen GreenBus.
+Người dùng:
+Bạn là lập trình viên Java đang xây dựng tính năng kiểm tra mã vé cho hệ thống bán vé xe khách trực tuyến GreenBus.
 
-Hay viet class TicketValidator bang Java de kiem tra ma ve hop le theo cac quy tac:
-1. Ma ve bat buoc bat dau bang tien to "BUS-".
-2. Tiep theo la ma tinh/thanh pho gom dung 2 ky tu chu in hoa A-Z, vi du HN, SG, DN.
-3. Tiep theo la dau gach ngang "-".
-4. Tiep theo la 6 chu so bieu dien ngay di xe theo dinh dang YYMMDD.
-5. Ngay di xe khong duoc la ngay trong qua khu, phai lon hon hoac bang ngay hien tai cua he thong.
+Hãy viết class TicketValidator bằng Java để kiểm tra mã vé hợp lệ theo các quy tắc:
+1. Mã vé bắt buộc bắt đầu bằng tiền tố "BUS-".
+2. Tiếp theo là mã tỉnh/thành phố gồm đúng 2 ký tự chữ in hoa A-Z, ví dụ HN, SG, DN.
+3. Tiếp theo là dấu gạch ngang "-".
+4. Tiếp theo là 6 chữ số biểu diễn ngày đi xe theo định dạng YYMMDD.
+5. Ngày đi xe không được là ngày trong quá khứ, phải lớn hơn hoặc bằng ngày hiện tại của hệ thống.
 
-Yeu cau xu ly loi bien:
-1. Neu ma ve null thi tra ve false, khong duoc gay NullPointerException.
-2. Neu ma ve rong hoac chi gom khoang trang thi tra ve false.
-3. Neu sai dinh dang thi tra ve false.
-4. Neu ngay thang khong hop le, vi du ngay 32 thang 13 hoac ngay 30 thang 2, thi tra ve false.
-5. Neu ngay di xe trong qua khu thi tra ve false.
-6. Chi dung thu vien chuan Java.
+Yêu cầu xử lý lỗi biên:
+1. Nếu mã vé null thì trả về false, không được gây NullPointerException.
+2. Nếu mã vé rỗng hoặc chỉ gồm khoảng trắng thì trả về false.
+3. Nếu sai định dạng thì trả về false.
+4. Nếu ngày tháng không hợp lệ, ví dụ ngày 32 tháng 13 hoặc ngày 30 tháng 2, thì trả về false.
+5. Nếu ngày đi xe trong quá khứ thì trả về false.
+6. Chỉ dùng thư viện chuẩn Java.
 
-Hay tra ve:
-1. Ma nguon Java hoan chinh cho class TicketValidator.
-2. Mot ham main nho de chay thu vai truong hop hop le va khong hop le.
-3. Giai thich ngan gon cach code xu ly tung nhom quy tac.
+Hãy trả về:
+1. Mã nguồn Java hoàn chỉnh cho class TicketValidator.
+2. Một hàm main nhỏ để chạy thử vài trường hợp hợp lệ và không hợp lệ.
+3. Giải thích ngắn gọn cách code xử lý từng nhóm quy tắc.
 
 AI:
-Duoi day la phien ban TicketValidator dau tien:
+Dưới đây là phiên bản TicketValidator đầu tiên:
 
 ```java
 import java.time.LocalDate;
@@ -118,36 +118,36 @@ public class TicketValidator {
 }
 ```
 
-Code tren dung regex de kiem tra dinh dang co ban, cat 6 chu so ngay thang, chuyen thanh nam 20YY va so sanh voi LocalDate.now().
+Code trên dùng regex để kiểm tra định dạng cơ bản, cắt 6 chữ số ngày tháng, chuyển thành năm 20YY và so sánh với LocalDate.now().
 
-Nguoi dung:
-Ban la mot ky su kiem thu va kiem toan bao mat doc lap. Hay review ma nguon Java TicketValidator duoi day nhu review truoc khi dua vao he thong GreenBus.
+Người dùng:
+Bạn là một kỹ sư kiểm thử và kiểm toán bảo mật độc lập. Hãy review mã nguồn Java TicketValidator dưới đây như review trước khi đưa vào hệ thống GreenBus.
 
-Muc tieu review:
-1. Tim loi logic tiem an trong xu ly dinh dang BUS-XX-YYMMDD.
-2. Kiem tra nguy co NullPointerException, StringIndexOutOfBoundsException hoac DateTimeException.
-3. Kiem tra cach phan tich ngay thang co chap nhan ngay khong hop le hay khong, vi du 260230 hoac 261332.
-4. Kiem tra logic so sanh voi ngay hien tai co gap van de khi chuyen ngay, chuyen nam hoac khi he thong chay o mui gio khac hay khong.
-5. Kiem tra ma co de test tu dong hay khong. Neu phu thuoc truc tiep vao LocalDate.now() thi hay de xuat cach cai tien bang Clock.
-6. Dua ra danh sach loi/rui ro theo muc do nghiem trong.
-7. Viet lai phien ban TicketValidator toi uu cuoi cung, su dung java.time.LocalDate hien dai va co kha nang test on dinh.
+Mục tiêu review:
+1. Tìm lỗi logic tiềm ẩn trong xử lý định dạng BUS-XX-YYMMDD.
+2. Kiểm tra nguy cơ NullPointerException, StringIndexOutOfBoundsException hoặc DateTimeException.
+3. Kiểm tra cách phân tích ngày tháng có chấp nhận ngày không hợp lệ hay không, ví dụ 260230 hoặc 261332.
+4. Kiểm tra logic so sánh với ngày hiện tại có gặp vấn đề khi chuyển ngày, chuyển năm hoặc khi hệ thống chạy ở múi giờ khác hay không.
+5. Kiểm tra mã có dễ test tự động hay không. Nếu phụ thuộc trực tiếp vào LocalDate.now() thì hãy đề xuất cách cải tiến bằng Clock.
+6. Đưa ra danh sách lỗi/rủi ro theo mức độ nghiêm trọng.
+7. Viết lại phiên bản TicketValidator tối ưu cuối cùng, sử dụng java.time.LocalDate hiện đại và có khả năng test ổn định.
 
-Ma nguon can review:
-[Ma nguon TicketValidator phien ban dau tien o tren]
+Mã nguồn cần review:
+[Mã nguồn TicketValidator phiên bản đầu tiên ở trên]
 
 AI:
-Ket qua review doc lap:
+Kết quả review độc lập:
 
-1. Muc do cao: DateTimeFormatter.ofPattern("yyyyMMdd") mac dinh co ResolverStyle SMART. Cach parse nay co the khong chan nghiem ngat mot so ngay khong hop le nhu 20260230 theo dung ky vong nghiep vu. Nen dung parse nghiem ngat hoac tach ngay thang roi tao LocalDate.of de DateTimeException duoc xu ly ro rang.
-2. Muc do cao: Code khong bat DateTimeException. Neu chuoi co dinh dang so nhung ngay thang khong hop le, ham co the nem exception thay vi tra ve false.
-3. Muc do trung binh: Code goi truc tiep LocalDate.now(), lam test phu thuoc ngay thuc te cua may chay. Nen inject Clock de co the test cac truong hop qua khu, hien tai va tuong lai on dinh.
-4. Muc do trung binh: LocalDate.now() dung mui gio mac dinh cua he thong. Neu server chay o mui gio khac, ket qua co the khac voi ngay nghiep vu cua GreenBus. Dung Clock giup cau hinh mui gio ro rang hon.
-5. Muc do thap: Viec substring(7) hien tai an toan vi da regex truoc, nhung nen dung group regex de code ro nghiep vu hon va giam phu thuoc vao chi so cat chuoi.
+1. Mức độ cao: DateTimeFormatter.ofPattern("yyyyMMdd") mặc định có ResolverStyle SMART. Cách parse này có thể không chặn nghiêm ngặt một số ngày không hợp lệ như 20260230 theo đúng kỳ vọng nghiệp vụ. Nên dùng parse nghiêm ngặt hoặc tách ngày tháng rồi tạo LocalDate.of để DateTimeException được xử lý rõ ràng.
+2. Mức độ cao: Code không bắt DateTimeException. Nếu chuỗi có định dạng số nhưng ngày tháng không hợp lệ, hàm có thể ném exception thay vì trả về false.
+3. Mức độ trung bình: Code gọi trực tiếp LocalDate.now(), làm test phụ thuộc ngày thực tế của máy chạy. Nên inject Clock để có thể test các trường hợp quá khứ, hiện tại và tương lai ổn định.
+4. Mức độ trung bình: LocalDate.now() dùng múi giờ mặc định của hệ thống. Nếu server chạy ở múi giờ khác, kết quả có thể khác với ngày nghiệp vụ của GreenBus. Dùng Clock giúp cấu hình múi giờ rõ ràng hơn.
+5. Mức độ thấp: Việc substring(7) hiện tại an toàn vì đã regex trước, nhưng nên dùng group regex để code rõ nghiệp vụ hơn và giảm phụ thuộc vào chỉ số cắt chuỗi.
 
-Phien ban toi uu nen dung Pattern co group, Clock, LocalDate.of va bat DateTimeException de tra ve false voi ngay khong hop le.
+Phiên bản tối ưu nên dùng Pattern có group, Clock, LocalDate.of và bắt DateTimeException để trả về false với ngày không hợp lệ.
 ````
 
-## 5. Ma nguon Java toi uu cuoi cung sau kiem duyet
+## 5. Mã nguồn Java tối ưu cuối cùng sau kiểm duyệt
 
 ```java
 import java.time.Clock;
@@ -213,10 +213,10 @@ public final class TicketValidator {
 }
 ```
 
-## 6. Giai thich phien ban cuoi
+## 6. Giải thích phiên bản cuối
 
-Phien ban cuoi dung regex `^BUS-([A-Z]{2})-(\\d{6})$` de tach ro ma tinh va ngay di xe. Ma tinh bat buoc la 2 chu cai in hoa A-Z. Phan ngay bat buoc la 6 chu so.
+Phiên bản cuối dùng regex `^BUS-([A-Z]{2})-(\\d{6})$` để tách rõ mã tỉnh và ngày đi xe. Mã tỉnh bắt buộc là 2 chữ cái in hoa A-Z. Phần ngày bắt buộc là 6 chữ số.
 
-Ham `parseTravelDate` tach `YY`, `MM`, `DD`, chuyen nam thanh `2000 + YY`, sau do dung `LocalDate.of(year, month, day)`. Neu ngay thang khong hop le, Java nem `DateTimeException` va ham `isValid` tra ve `false`.
+Hàm `parseTravelDate` tách `YY`, `MM`, `DD`, chuyển năm thành `2000 + YY`, sau đó dùng `LocalDate.of(year, month, day)`. Nếu ngày tháng không hợp lệ, Java ném `DateTimeException` và hàm `isValid` trả về `false`.
 
-Class nhan `Clock` qua constructor de co the test on dinh theo ngay gia lap, dong thoi van co constructor mac dinh dung `Clock.systemDefaultZone()` khi chay thuc te. Viec so sanh ngay dung `travelDate.isBefore(today)`, nen ma ve cua hom nay va tuong lai hop le, con ngay qua khu khong hop le.
+Class nhận `Clock` qua constructor để có thể test ổn định theo ngày giả lập, đồng thời vẫn có constructor mặc định dùng `Clock.systemDefaultZone()` khi chạy thực tế. Việc so sánh ngày dùng `travelDate.isBefore(today)`, nên mã vé của hôm nay và tương lai hợp lệ, còn ngày quá khứ không hợp lệ.
